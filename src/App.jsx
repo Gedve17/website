@@ -112,8 +112,8 @@ function WelcomeScreen({ name, setName, onSubmit, darkMode, toggleDarkMode }) {
           {darkMode ? '☀️ Light mode' : '🌙 Dark mode'}
         </button>
 
-        <p className="eyebrow">React remake</p>
-        <h1>Gedvydas Kleberis Program</h1>
+        <p className="eyebrow">Welcome</p>
+        <h1>Y9</h1>
         <p className="muted">What is your name?</p>
 
         <form onSubmit={handleSubmit} className="name-form">
