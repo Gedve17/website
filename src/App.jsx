@@ -1,3 +1,5 @@
+import SnakeGame from './SnakeGame'
+
 import { useEffect, useMemo, useState } from 'react'
 
 const choices = ['rock', 'paper', 'scissors']
@@ -133,7 +135,13 @@ function WelcomeScreen({ name, setName, onSubmit, darkMode, toggleDarkMode }) {
   )
 }
 
-function MenuScreen({ name, onOpenCalculator, onOpenGame, onReset }) {
+function MenuScreen({
+  name,
+  onOpenCalculator,
+  onOpenGame,
+  onOpenSnake,
+  onReset,
+}) {
   return (
     <section className="screen centered-screen">
       <div className="content-card menu-card">
@@ -154,6 +162,12 @@ function MenuScreen({ name, onOpenCalculator, onOpenGame, onReset }) {
             <span className="feature-icon">✊</span>
             <strong>Rock Paper Scissors</strong>
             <span>Play against the computer and keep score</span>
+          </button>
+
+          <button className="feature-card" onClick={onOpenSnake} type="button">
+            <span className="feature-icon">🐍</span>
+            <strong>Snake</strong>
+            <span>Eat food, grow longer and beat your score</span>
           </button>
         </div>
 
@@ -392,12 +406,14 @@ export default function App() {
           name={name}
           onOpenCalculator={() => setScreen('calculator')}
           onOpenGame={() => setScreen('game')}
+          onOpenSnake={() => setScreen('snake')}
           onReset={reset}
         />
       )}
 
       {screen === 'game' && <GameScreen onBack={() => setScreen('menu')} />}
       {screen === 'calculator' && <CalculatorScreen onBack={() => setScreen('menu')} />}
+      {screen === 'snake' && <SnakeGame onBack={() => setScreen('menu')} />}
     </main>
   )
 }
