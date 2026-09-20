@@ -4,10 +4,12 @@
 }
 
 .snake-shell {
-  width: min(620px, 100%);
+  width: min(650px, 100%);
   padding: 24px;
   border: 1px solid var(--border, rgba(127, 127, 127, 0.25));
-  background: var(--surface, rgba(255, 255, 255, 0.08));
+  background:
+    radial-gradient(circle at top right, rgba(55, 178, 77, 0.08), transparent 34%),
+    var(--surface, rgba(255, 255, 255, 0.08));
   border-radius: 28px;
   box-sizing: border-box;
 }
@@ -23,17 +25,67 @@
 .snake-header h2 {
   margin: 0;
   text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .snake-header .score-pill {
   justify-self: end;
 }
 
+.snake-score {
+  font-variant-numeric: tabular-nums;
+}
+
 .snake-status {
+  min-height: 24px;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   text-align: center;
   font-weight: 700;
   color: var(--muted, inherit);
+}
+
+.snake-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(127, 127, 127, 0.55);
+}
+
+.snake-status-dot-playing {
+  background: #51cf66;
+  box-shadow: 0 0 12px rgba(81, 207, 102, 0.8);
+}
+
+.snake-status-dot-paused {
+  background: #ffd43b;
+  box-shadow: 0 0 12px rgba(255, 212, 59, 0.65);
+}
+
+.snake-status-dot-gameover {
+  background: #ff6b6b;
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.7);
+}
+
+.snake-status-dot-won {
+  background: #74c0fc;
+  box-shadow: 0 0 12px rgba(116, 192, 252, 0.7);
+}
+
+.snake-board-frame {
+  position: relative;
+  width: 100%;
+  padding: 7px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.18));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 40px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
 .snake-board {
@@ -43,36 +95,200 @@
   grid-template-columns: repeat(20, 1fr);
   grid-template-rows: repeat(20, 1fr);
   gap: 1px;
-  padding: 4px;
-  border: 1px solid var(--border, rgba(127, 127, 127, 0.25));
-  border-radius: 18px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
   overflow: hidden;
   box-sizing: border-box;
-  background: rgba(127, 127, 127, 0.12);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(145deg, #111b16, #0b120e);
+  background-size: 5% 5%, 5% 5%, auto;
+  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.5);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
 
 .snake-cell {
+  position: relative;
   min-width: 0;
   min-height: 0;
-  border-radius: 2px;
-  background: rgba(127, 127, 127, 0.04);
+  border-radius: 20%;
 }
 
 .snake-body {
-  background: #37b24d;
+  z-index: 2;
+  margin: 1px;
+  border-radius: 34%;
+  background: linear-gradient(145deg, #69db7c, #2f9e44);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.28),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.18),
+    0 0 7px rgba(81, 207, 102, 0.22);
+}
+
+.snake-body::after {
+  content: '';
+  position: absolute;
+  inset: 20%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.snake-tail {
+  transform: scale(0.8);
+  border-radius: 50%;
 }
 
 .snake-head {
-  background: #2b8a3e;
-  border-radius: 35%;
+  z-index: 3;
+  margin: 0;
+  border-radius: 38%;
+  background: linear-gradient(145deg, #8ce99a, #2b8a3e);
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.35),
+    0 0 12px rgba(81, 207, 102, 0.48);
+}
+
+.snake-head::before,
+.snake-head::after {
+  content: '';
+  position: absolute;
+  width: 18%;
+  height: 18%;
+  border-radius: 50%;
+  background: #07120a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.snake-head-right::before {
+  right: 14%;
+  top: 20%;
+}
+
+.snake-head-right::after {
+  right: 14%;
+  bottom: 20%;
+}
+
+.snake-head-left::before {
+  left: 14%;
+  top: 20%;
+}
+
+.snake-head-left::after {
+  left: 14%;
+  bottom: 20%;
+}
+
+.snake-head-up::before {
+  top: 14%;
+  left: 20%;
+}
+
+.snake-head-up::after {
+  top: 14%;
+  right: 20%;
+}
+
+.snake-head-down::before {
+  bottom: 14%;
+  left: 20%;
+}
+
+.snake-head-down::after {
+  bottom: 14%;
+  right: 20%;
 }
 
 .snake-food {
-  background: #fa5252;
-  border-radius: 50%;
+  z-index: 4;
+  margin: 8%;
+  border-radius: 45% 55% 50% 50%;
+  background: radial-gradient(circle at 35% 28%, #ff8787 0 12%, #fa5252 35%, #c92a2a 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 0 11px rgba(250, 82, 82, 0.68);
+  animation: snake-food-pulse 1.15s ease-in-out infinite alternate;
+}
+
+.snake-food::before {
+  content: '';
+  position: absolute;
+  width: 18%;
+  height: 35%;
+  top: -18%;
+  left: 52%;
+  border-radius: 999px;
+  background: #8d6e3f;
+  transform: rotate(18deg);
+}
+
+.snake-food::after {
+  content: '';
+  position: absolute;
+  width: 35%;
+  height: 22%;
+  top: -10%;
+  left: 58%;
+  border-radius: 100% 0 100% 0;
+  background: #69db7c;
+  transform: rotate(-16deg);
+}
+
+@keyframes snake-food-pulse {
+  from {
+    transform: scale(0.88);
+    filter: saturate(0.95);
+  }
+
+  to {
+    transform: scale(1);
+    filter: saturate(1.15);
+  }
+}
+
+.snake-overlay {
+  position: absolute;
+  inset: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 16px;
+  pointer-events: none;
+  background: rgba(5, 12, 8, 0.52);
+  backdrop-filter: blur(2px);
+  color: white;
+  text-align: center;
+}
+
+.snake-overlay span {
+  font-size: clamp(1.7rem, 6vw, 3rem);
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+}
+
+.snake-overlay small {
+  font-size: 0.95rem;
+  font-weight: 800;
+  opacity: 0.82;
+}
+
+.snake-overlay-ready {
+  background: rgba(5, 12, 8, 0.34);
+}
+
+.snake-overlay-gameover {
+  background: rgba(30, 5, 7, 0.54);
+}
+
+.snake-overlay-won {
+  background: rgba(5, 18, 28, 0.5);
 }
 
 .snake-actions {
@@ -92,46 +308,75 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   margin-top: 16px;
 }
 
 .snake-pad-row {
   display: flex;
-  gap: 7px;
+  gap: 8px;
 }
 
 .snake-pad button {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border: 1px solid var(--border, rgba(127, 127, 127, 0.3));
-  border-radius: 14px;
-  background: var(--surface-strong, rgba(127, 127, 127, 0.14));
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)),
+    var(--surface-strong, rgba(127, 127, 127, 0.14));
   color: inherit;
   font: inherit;
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 900;
   cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 5px 12px rgba(0, 0, 0, 0.12);
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
 }
 
 .snake-pad button:active {
-  transform: scale(0.96);
+  transform: scale(0.92);
+  border-color: rgba(81, 207, 102, 0.7);
+  background: rgba(55, 178, 77, 0.2);
 }
 
 .snake-help {
-  margin: 12px 0 0;
+  margin: 14px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--muted, inherit);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .snake-pad button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(81, 207, 102, 0.52);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snake-food {
+    animation: none;
+  }
+
+  .snake-pad button {
+    transition: none;
+  }
 }
 
 @media (max-width: 700px) {
   .snake-screen {
-    padding: 12px;
+    padding: 10px;
   }
 
   .snake-shell {
-    padding: 14px;
+    padding: 13px;
     border-radius: 20px;
   }
 
@@ -143,12 +388,28 @@
     display: none;
   }
 
+  .snake-board-frame {
+    padding: 5px;
+    border-radius: 18px;
+  }
+
   .snake-board {
-    border-radius: 14px;
+    padding: 4px;
+    border-radius: 13px;
+  }
+
+  .snake-overlay {
+    inset: 5px;
+    border-radius: 13px;
   }
 
   .snake-pad button {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .snake-help {
+    gap: 8px;
+    font-size: 0.78rem;
   }
 }

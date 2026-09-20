@@ -173,8 +173,8 @@ export default function SnakeGame({ onBack }) {
     return () => window.clearInterval(interval)
   }, [food, status])
 
-  const snakeCells = useMemo(
-    () => new Set(snake.map((segment) => `${segment.x}-${segment.y}`)),
+  const snakeIndexByCell = useMemo(
+    () => new Map(snake.map((segment, index) => [`${segment.x}-${segment.y}`, index])),
     [snake],
   )
 
@@ -249,7 +249,12 @@ export default function SnakeGame({ onBack }) {
     won: 'Play again',
   }[status]
 
-  const head = snake[0]
+  const overlayText = {
+    ready: 'READY?',
+    paused: 'PAUSED',
+    gameover: 'GAME OVER',
+    won: 'YOU WIN!',
+  }[status]
 
   return (
     <section className="screen snake-screen">
@@ -260,33 +265,46 @@ export default function SnakeGame({ onBack }) {
           </button>
 
           <h2>Snake</h2>
-          <div className="score-pill">Score: {score}</div>
+          <div className="score-pill snake-score">Score: {score}</div>
         </div>
 
         <div className="snake-status" aria-live="polite">
+          <span className={`snake-status-dot snake-status-dot-${status}`} />
           {statusText}
         </div>
 
-        <div
-          className="snake-board"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          aria-label={`Snake game. Score ${score}. ${statusText}.`}
-        >
-          {Array.from({ length: BOARD_SIZE * BOARD_SIZE }, (_, index) => {
-            const x = index % BOARD_SIZE
-            const y = Math.floor(index / BOARD_SIZE)
-            const isSnake = snakeCells.has(`${x}-${y}`)
-            const isHead = head.x === x && head.y === y
-            const isFood = food && food.x === x && food.y === y
+        <div className="snake-board-frame">
+          <div
+            className={`snake-board snake-board-${status}`}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            aria-label={`Snake game. Score ${score}. ${statusText}.`}
+          >
+            {Array.from({ length: BOARD_SIZE * BOARD_SIZE }, (_, index) => {
+              const x = index % BOARD_SIZE
+              const y = Math.floor(index / BOARD_SIZE)
+              const snakeIndex = snakeIndexByCell.get(`${x}-${y}`)
+              const isSnake = snakeIndex !== undefined
+              const isHead = snakeIndex === 0
+              const isTail = snakeIndex === snake.length - 1
+              const isFood = food && food.x === x && food.y === y
 
-            let className = 'snake-cell'
-            if (isSnake) className += ' snake-body'
-            if (isHead) className += ' snake-head'
-            if (isFood) className += ' snake-food'
+              let className = 'snake-cell'
+              if (isSnake) className += ' snake-body'
+              if (isHead) className += ` snake-head snake-head-${directionRef.current}`
+              if (isTail) className += ' snake-tail'
+              if (isFood) className += ' snake-food'
 
-            return <div key={`${x}-${y}`} className={className} aria-hidden="true" />
-          })}
+              return <div key={`${x}-${y}`} className={className} aria-hidden="true" />
+            })}
+          </div>
+
+          {status !== 'playing' && (
+            <div className={`snake-overlay snake-overlay-${status}`} aria-hidden="true">
+              <span>{overlayText}</span>
+              {status === 'gameover' && <small>Score {score}</small>}
+            </div>
+          )}
         </div>
 
         <div className="snake-actions">
@@ -318,7 +336,8 @@ export default function SnakeGame({ onBack }) {
         </div>
 
         <p className="snake-help">
-          PC: Arrow keys or WASD · iPhone: swipe on the board
+          <span>⌨️ Arrow keys / WASD</span>
+          <span>📱 Swipe on the board</span>
         </p>
       </div>
     </section>
