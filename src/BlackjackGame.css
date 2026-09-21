@@ -86,7 +86,7 @@
 
 .blackjack-table-decor::after {
   right: 72px;
-  bottom: 72px;
+  bottom: 88px;
   transform: translate(50%, 50%);
 }
 
