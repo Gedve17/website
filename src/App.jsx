@@ -1,4 +1,7 @@
 import SnakeGame from './SnakeGame'
+import FlappyBird from './FlappyBird'
+import TetrisGame from './TetrisGame'
+import BlackjackGame from './BlackjackGame'
 
 import { useEffect, useMemo, useState } from 'react'
 
@@ -140,10 +143,13 @@ function MenuScreen({
   onOpenCalculator,
   onOpenGame,
   onOpenSnake,
+  onOpenFlappy,
+  onOpenTetris,
+  onOpenBlackjack,
   onReset,
 }) {
   return (
-    <section className="screen centered-screen">
+    <section className="screen centered-screen">  {/* Menu screen with options for different features */}
       <div className="content-card menu-card">
         <div>
           <p className="eyebrow">Welcome</p>
@@ -169,6 +175,25 @@ function MenuScreen({
             <strong>Snake</strong>
             <span>Eat food, grow longer and beat your score</span>
           </button>
+
+          <button className="feature-card" onClick={onOpenFlappy} type="button">
+            <span className="feature-icon">🐦</span>
+            <strong>Flappy Bird</strong>
+            <span>Navigate through pipes and avoid collisions</span>
+          </button>
+
+          <button className="feature-card" onClick={onOpenTetris} type="button">
+            <span className="feature-icon">🧱</span>
+            <strong>Tetris</strong>
+            <span>Stack blocks, clear lines and beat your score</span>
+          </button>
+
+          <button className="feature-card" onClick={onOpenBlackjack} type="button">
+            <span className="feature-icon">🃏</span>
+            <strong>Blackjack</strong>
+            <span>Play the classic card game and try to beat the dealer</span>
+          </button>
+
         </div>
 
         <button className="text-button" type="button" onClick={onReset}>
@@ -407,6 +432,9 @@ export default function App() {
           onOpenCalculator={() => setScreen('calculator')}
           onOpenGame={() => setScreen('game')}
           onOpenSnake={() => setScreen('snake')}
+          onOpenFlappy={() => setScreen('flappy')}
+          onOpenTetris={() => setScreen('tetris')}
+          onOpenBlackjack={() => setScreen('blackjack')}
           onReset={reset}
         />
       )}
@@ -414,6 +442,9 @@ export default function App() {
       {screen === 'game' && <GameScreen onBack={() => setScreen('menu')} />}
       {screen === 'calculator' && <CalculatorScreen onBack={() => setScreen('menu')} />}
       {screen === 'snake' && <SnakeGame onBack={() => setScreen('menu')} />}
+      {screen === 'flappy' && (<FlappyBird onBack={() => setScreen('menu')} />)}
+      {screen === 'tetris' && (<TetrisGame onBack={() => setScreen('menu')} />)}
+      {screen === 'blackjack' && (<BlackjackGame onBack={() => setScreen('menu')} />)}
     </main>
   )
 }
