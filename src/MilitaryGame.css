@@ -1,0 +1,260 @@
+.military-screen {
+  display: grid;
+  place-items: center;
+}
+
+.military-shell {
+  width: min(560px, 100%);
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+}
+
+.military-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.military-header h2 {
+  margin: 0;
+  text-align: center;
+}
+
+.military-score {
+  justify-self: end;
+}
+
+.military-hud {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.military-health-bar {
+  flex: 1;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(127, 127, 127, 0.25);
+  overflow: hidden;
+}
+
+.military-health-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b6b, #ffd43b 60%, #69db7c);
+  transition: width 160ms ease;
+}
+
+.military-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 560 / 340;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 2px solid #3a341f;
+  touch-action: none;
+  user-select: none;
+  background: linear-gradient(180deg, #7a6a3f 0%, #62542f 55%, #4a3e22 100%);
+}
+
+.military-lane-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.military-lane-line-1 {
+  top: 36%;
+}
+
+.military-lane-line-2 {
+  top: 64%;
+}
+
+.military-base {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 9%;
+  background: linear-gradient(90deg, #2b2f3a, rgba(43, 47, 58, 0.3));
+}
+
+.military-enemy,
+.military-player {
+  position: absolute;
+  width: 11%;
+  aspect-ratio: 1.7;
+  transform: translate(-50%, -50%);
+}
+
+.military-tread {
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #4b4d3f, #33351f);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.military-turret {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: -35%;
+  height: 60%;
+  border-radius: 4px;
+  background: #5c6b3e;
+}
+
+.military-turret::after {
+  content: '';
+  position: absolute;
+  right: -55%;
+  top: 40%;
+  width: 65%;
+  height: 18%;
+  background: #454f2c;
+}
+
+.military-enemy .military-tread {
+  background: linear-gradient(180deg, #8a4c4c, #5c2d2d);
+}
+
+.military-enemy .military-turret {
+  background: #7a4747;
+}
+
+.military-enemy .military-turret::after {
+  background: #603535;
+  left: -55%;
+  right: auto;
+}
+
+.military-enemy-tough .military-tread {
+  background: linear-gradient(180deg, #a45a2f, #6e3b1c);
+}
+
+.military-player {
+  z-index: 5;
+}
+
+.military-turret-player::after {
+  background: #34405c;
+}
+
+.military-player .military-turret {
+  background: #3f5588;
+}
+
+.military-bullet {
+  position: absolute;
+  z-index: 4;
+  width: 12px;
+  height: 3px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #ffd43b;
+  box-shadow: 0 0 8px rgba(255, 212, 59, 0.8);
+}
+
+.military-overlay {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  text-align: center;
+  background: rgba(20, 16, 6, 0.5);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.military-overlay strong {
+  font-size: clamp(1.5rem, 7vw, 2.2rem);
+  letter-spacing: 0.06em;
+}
+
+.military-overlay span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: 800;
+}
+
+.military-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.military-fire-button {
+  min-width: 120px;
+  background: #4a5a2e;
+}
+
+.military-pad {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.military-pad button {
+  width: 58px;
+  height: 50px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.military-pad button:active {
+  transform: translateY(1px);
+  background: var(--accent);
+}
+
+.military-help {
+  margin: 14px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 700px) {
+  .military-shell {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .military-header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .military-header h2 {
+    display: none;
+  }
+
+  .military-score {
+    justify-self: end;
+  }
+}

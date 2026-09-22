@@ -2,6 +2,10 @@ import SnakeGame from './SnakeGame'
 import FlappyBird from './FlappyBird'
 import TetrisGame from './TetrisGame'
 import BlackjackGame from './BlackjackGame'
+import DrivingGame from './DrivingGame'
+import ZombieGame from './ZombieGame'
+import MilitaryGame from './MilitaryGame'
+
 
 import { useEffect, useMemo, useState } from 'react'
 
@@ -146,6 +150,9 @@ function MenuScreen({
   onOpenFlappy,
   onOpenTetris,
   onOpenBlackjack,
+  onOpenDriving,
+  onOpenZombie,
+  onOpenMilitary,
   onReset,
 }) {
   return (
@@ -192,6 +199,24 @@ function MenuScreen({
             <span className="feature-icon">🃏</span>
             <strong>Blackjack</strong>
             <span>Play the classic card game and try to beat the dealer</span>
+          </button>
+
+          <button className="feature-card" onClick={onOpenDriving} type="button">
+            <span className="feature-icon">🏎️</span>
+            <strong>Driving</strong>
+            <span>Switch lanes, avoid traffic and chase a high score</span>
+          </button>
+
+          <button className="feature-card" onClick={onOpenZombie} type="button">
+            <span className="feature-icon">🧟</span>
+            <strong>Zombie Defense</strong>
+            <span>Move, shoot and survive the incoming waves</span>
+          </button>
+
+          <button className="feature-card" onClick={onOpenMilitary} type="button">
+            <span className="feature-icon">🎖️</span>
+            <strong>Military</strong>
+            <span>Command your unit and complete the mission</span>
           </button>
 
         </div>
@@ -435,6 +460,9 @@ export default function App() {
           onOpenFlappy={() => setScreen('flappy')}
           onOpenTetris={() => setScreen('tetris')}
           onOpenBlackjack={() => setScreen('blackjack')}
+          onOpenDriving={() => setScreen('driving')}
+          onOpenZombie={() => setScreen('zombie')}
+          onOpenMilitary={() => setScreen('military')}
           onReset={reset}
         />
       )}
@@ -445,6 +473,9 @@ export default function App() {
       {screen === 'flappy' && (<FlappyBird onBack={() => setScreen('menu')} />)}
       {screen === 'tetris' && (<TetrisGame onBack={() => setScreen('menu')} />)}
       {screen === 'blackjack' && (<BlackjackGame onBack={() => setScreen('menu')} />)}
+      {screen === 'driving' && (<DrivingGame onBack={() => setScreen('menu')} />)}
+      {screen === 'zombie' && (<ZombieGame onBack={() => setScreen('menu')} />)}
+      {screen === 'military' && (<MilitaryGame onBack={() => setScreen('menu')} />)}
     </main>
   )
 }

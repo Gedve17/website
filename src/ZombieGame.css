@@ -1,0 +1,270 @@
+.zombie-screen {
+  display: grid;
+  place-items: center;
+}
+
+.zombie-shell {
+  width: min(460px, 100%);
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+}
+
+.zombie-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.zombie-header h2 {
+  margin: 0;
+  text-align: center;
+}
+
+.zombie-score {
+  justify-self: end;
+}
+
+.zombie-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.zombie-lives {
+  display: flex;
+  gap: 4px;
+  font-size: 1.1rem;
+}
+
+.zombie-life {
+  color: rgba(127, 127, 127, 0.35);
+}
+
+.zombie-life-on {
+  color: #ff6b6b;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+}
+
+.zombie-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 360 / 520;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 2px solid #26301f;
+  touch-action: none;
+  user-select: none;
+  background: linear-gradient(180deg, #1a2414 0%, #101a0c 65%, #0b1308 100%);
+}
+
+.zombie-fog {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(120, 160, 90, 0.14), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(90, 130, 70, 0.12), transparent 45%);
+  pointer-events: none;
+}
+
+.zombie-enemy,
+.zombie-player {
+  position: absolute;
+  width: 9%;
+  aspect-ratio: 0.68;
+  transform: translate(-50%, -50%);
+}
+
+.zombie-head {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  top: 0;
+  height: 42%;
+  border-radius: 50% 50% 40% 40%;
+  background: linear-gradient(180deg, #8fae5a, #5f7d3a);
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.28);
+}
+
+.zombie-enemy {
+  z-index: 3;
+}
+
+.zombie-enemy::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  top: 40%;
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, #4c5f38, #384929);
+}
+
+.zombie-enemy-tough .zombie-head {
+  background: linear-gradient(180deg, #b5555c, #7a3138);
+}
+
+.zombie-enemy-tough::after {
+  background: linear-gradient(180deg, #6e3a3d, #4a2528);
+}
+
+.zombie-arm {
+  position: absolute;
+  top: 44%;
+  width: 10%;
+  height: 34%;
+  border-radius: 4px;
+  background: #4c5f38;
+}
+
+.zombie-arm-left {
+  left: -4%;
+  transform: rotate(-18deg);
+}
+
+.zombie-arm-right {
+  right: -4%;
+  transform: rotate(18deg);
+}
+
+.zombie-player {
+  z-index: 5;
+  width: 10%;
+}
+
+.zombie-player::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 40%;
+  bottom: 0;
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, #3b5bab, #223a76);
+}
+
+.zombie-player .zombie-head {
+  background: linear-gradient(180deg, #f2c896, #d9a774);
+}
+
+.zombie-gun {
+  position: absolute;
+  top: 46%;
+  right: -18%;
+  width: 40%;
+  height: 10%;
+  border-radius: 2px;
+  background: #2b2b2b;
+}
+
+.zombie-bullet {
+  position: absolute;
+  z-index: 4;
+  width: 3px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #ffd43b;
+  box-shadow: 0 0 8px rgba(255, 212, 59, 0.8);
+}
+
+.zombie-overlay {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  text-align: center;
+  background: rgba(5, 10, 3, 0.5);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.zombie-overlay strong {
+  font-size: clamp(1.6rem, 8vw, 2.3rem);
+  letter-spacing: 0.06em;
+}
+
+.zombie-overlay span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: 800;
+}
+
+.zombie-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.zombie-fire-button {
+  min-width: 120px;
+  background: #b3391f;
+}
+
+.zombie-pad {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.zombie-pad button {
+  width: 58px;
+  height: 50px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.zombie-pad button:active {
+  transform: translateY(1px);
+  background: var(--accent);
+}
+
+.zombie-help {
+  margin: 14px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 700px) {
+  .zombie-shell {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .zombie-header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .zombie-header h2 {
+    display: none;
+  }
+
+  .zombie-score {
+    justify-self: end;
+  }
+}
