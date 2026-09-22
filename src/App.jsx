@@ -4,7 +4,7 @@ import TetrisGame from './TetrisGame'
 import BlackjackGame from './BlackjackGame'
 import DrivingGame from './DrivingGame'
 import ZombieGame from './ZombieGame'
-import MilitaryGame from './MilitaryGame'
+import HelicopterGame from './HelicopterGame'
 
 
 import { useEffect, useMemo, useState } from 'react'
@@ -152,7 +152,7 @@ function MenuScreen({
   onOpenBlackjack,
   onOpenDriving,
   onOpenZombie,
-  onOpenMilitary,
+  onOpenHelicopter,
   onReset,
 }) {
   return (
@@ -213,10 +213,10 @@ function MenuScreen({
             <span>Move, shoot and survive the incoming waves</span>
           </button>
 
-          <button className="feature-card" onClick={onOpenMilitary} type="button">
-            <span className="feature-icon">🎖️</span>
-            <strong>Military</strong>
-            <span>Command your unit and complete the mission</span>
+          <button className="feature-card" onClick={onOpenHelicopter} type="button">
+            <span className="feature-icon">🚁</span>
+            <strong>Helicopter Assault</strong>
+            <span>Fly combat missions, destroy targets and protect the convoy</span>
           </button>
 
         </div>
@@ -462,7 +462,7 @@ export default function App() {
           onOpenBlackjack={() => setScreen('blackjack')}
           onOpenDriving={() => setScreen('driving')}
           onOpenZombie={() => setScreen('zombie')}
-          onOpenMilitary={() => setScreen('military')}
+          onOpenHelicopter={() => setScreen('helicopter')}
           onReset={reset}
         />
       )}
@@ -475,7 +475,7 @@ export default function App() {
       {screen === 'blackjack' && (<BlackjackGame onBack={() => setScreen('menu')} />)}
       {screen === 'driving' && (<DrivingGame onBack={() => setScreen('menu')} />)}
       {screen === 'zombie' && (<ZombieGame onBack={() => setScreen('menu')} />)}
-      {screen === 'military' && (<MilitaryGame onBack={() => setScreen('menu')} />)}
+      {screen === 'helicopter' && (<HelicopterGame onBack={() => setScreen('menu')} />)}
     </main>
   )
 }

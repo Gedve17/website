@@ -4,7 +4,7 @@
 }
 
 .driving-shell {
-  width: min(460px, 100%);
+  width: min(560px, 100%);
   padding: 22px;
   border: 1px solid var(--border);
   border-radius: 28px;
@@ -17,7 +17,7 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .driving-header h2 {
@@ -25,181 +25,75 @@
   text-align: center;
 }
 
-.driving-score {
+.driving-best {
   justify-self: end;
 }
 
-.driving-stage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 360 / 560;
-  overflow: hidden;
+.driving-hud {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.driving-hud strong {
+  color: var(--text);
+}
+
+.driving-env {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.driving-canvas {
+  display: block;
+  width: min(100%, 420px);
+  height: auto;
+  margin: 0 auto;
+  border: 2px solid #262d36;
   border-radius: 22px;
-  border: 2px solid #2b2f3a;
+  background: #343a40;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  cursor: crosshair;
   touch-action: none;
   user-select: none;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.12) 0,
-      rgba(255, 255, 255, 0.12) 26px,
-      transparent 26px,
-      transparent 60px
-    ),
-    linear-gradient(#3a3f4c, #2c303a);
-  background-size: 100% 60px, 100% 100%;
-}
-
-.driving-lane-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 213, 79, 0.75) 0,
-    rgba(255, 213, 79, 0.75) 16px,
-    transparent 16px,
-    transparent 34px
-  );
-}
-
-.driving-lane-line-1 {
-  left: 34%;
-}
-
-.driving-lane-line-2 {
-  left: 66%;
-}
-
-.driving-score-display {
-  position: absolute;
-  z-index: 6;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  font-size: 1.8rem;
-  font-weight: 1000;
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
-}
-
-.driving-car,
-.driving-player {
-  position: absolute;
-  width: 15%;
-  aspect-ratio: 0.52;
-  transform: translate(-50%, -50%);
-  border-radius: 8px;
-  border: 2px solid rgba(0, 0, 0, 0.35);
-}
-
-.driving-car-car {
-  background: linear-gradient(180deg, #ff8787, #e03131);
-}
-
-.driving-car-truck {
-  background: linear-gradient(180deg, #ffd43b, #f08c00);
-  aspect-ratio: 0.62;
-}
-
-.driving-player {
-  z-index: 5;
-  background: linear-gradient(180deg, #74c0fc, #1971c2);
-}
-
-.driving-windshield {
-  position: absolute;
-  left: 14%;
-  right: 14%;
-  top: 20%;
-  height: 28%;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.55);
-}
-
-.driving-headlight {
-  position: absolute;
-  bottom: 4%;
-  width: 16%;
-  height: 6%;
-  border-radius: 2px;
-  background: #fff3bf;
-}
-
-.driving-headlight-left {
-  left: 10%;
-}
-
-.driving-headlight-right {
-  right: 10%;
-}
-
-.driving-overlay {
-  position: absolute;
-  z-index: 8;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: white;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.34);
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-}
-
-.driving-overlay strong {
-  font-size: clamp(1.7rem, 8vw, 2.4rem);
-  letter-spacing: 0.06em;
-}
-
-.driving-overlay span {
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.28);
-  font-weight: 800;
 }
 
 .driving-actions {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
-}
-
-.driving-pad {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
+  gap: 10px;
   margin-top: 14px;
+  flex-wrap: wrap;
 }
 
-.driving-pad button {
-  width: 58px;
-  height: 50px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+.driving-message {
+  width: fit-content;
+  max-width: 100%;
+  margin: 10px auto 0;
+  padding: 7px 12px;
+  border-radius: 999px;
   background: var(--surface-strong);
-  color: var(--text);
-  font-size: 1.4rem;
-  font-weight: 900;
-}
-
-.driving-pad button:active {
-  transform: translateY(1px);
-  background: var(--accent);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
 }
 
 .driving-help {
-  margin: 14px 0 0;
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
+  margin: 12px 0 0;
   color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
   text-align: center;
-  font-size: 0.84rem;
 }
 
 @media (max-width: 700px) {
@@ -216,7 +110,17 @@
     display: none;
   }
 
-  .driving-score {
-    justify-self: end;
+  .driving-hud {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .driving-hud span:nth-child(even) {
+    text-align: right;
+  }
+
+  .driving-canvas {
+    max-height: 68vh;
+    width: auto;
+    max-width: 100%;
   }
 }
