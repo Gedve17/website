@@ -69,7 +69,7 @@ function createAmmoState() {
   return WEAPONS.map((weapon) => ({ mag: weapon.mag, reserve: weapon.reserve }))
 }
 
-export default function ZombieGame({ onBack }) {
+export default function ZombieGame({ onBack, onScoreSubmit }) {
   const canvasRef = useRef(null)
   const frameRef = useRef(null)
   const keysRef = useRef(new Set())
@@ -94,6 +94,7 @@ export default function ZombieGame({ onBack }) {
   const bossWaveSpawnedRef = useRef(new Set())
   const lastTimeRef = useRef(null)
   const bestRef = useRef(loadBest())
+  const submittedRef = useRef(false)
 
   const [status, setStatus] = useState('ready')
   const [score, setScore] = useState(0)
@@ -122,6 +123,7 @@ export default function ZombieGame({ onBack }) {
 
   const resetGame = useCallback(() => {
     statusRef.current = 'ready'
+    submittedRef.current = false
     playerRef.current = { x: WIDTH / 2, y: HEIGHT / 2, health: MAX_HEALTH, invulnerable: 0 }
     zombiesRef.current = []
     bulletsRef.current = []
@@ -162,7 +164,11 @@ export default function ZombieGame({ onBack }) {
     setStatus('gameover')
     setNotice(`Overrun on wave ${waveRef.current}`)
     saveBest(scoreRef.current)
-  }, [saveBest])
+    if (!submittedRef.current) {
+      submittedRef.current = true
+      onScoreSubmit?.('zombie', scoreRef.current)
+    }
+  }, [onScoreSubmit, saveBest])
 
   const startReload = useCallback(() => {
     if (statusRef.current !== 'playing' || reloadingRef.current) return

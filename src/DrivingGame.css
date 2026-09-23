@@ -4,7 +4,7 @@
 }
 
 .driving-shell {
-  width: min(560px, 100%);
+  width: min(620px, 100%);
   padding: 22px;
   border: 1px solid var(--border);
   border-radius: 28px;
@@ -31,14 +31,18 @@
 
 .driving-hud {
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 8px 12px;
   margin-bottom: 10px;
   color: var(--muted);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 800;
+}
+
+.driving-hud span {
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .driving-hud strong {
@@ -46,11 +50,28 @@
 }
 
 .driving-env {
+  justify-self: end;
   padding: 4px 8px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
+}
+
+.driving-escape {
+  color: #ffd43b;
+}
+
+.driving-pursuit-warning {
+  grid-column: 1 / -1;
+  color: #ff8787;
+  text-align: center;
+  animation: driving-warning-flash 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes driving-warning-flash {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
 }
 
 .driving-canvas {
@@ -75,16 +96,21 @@
   flex-wrap: wrap;
 }
 
+.driving-actions button {
+  touch-action: none;
+}
+
 .driving-message {
   width: fit-content;
   max-width: 100%;
   margin: 10px auto 0;
   padding: 7px 12px;
+  border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface-strong);
-  color: var(--muted);
+  color: var(--text);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 900;
   text-align: center;
 }
 
@@ -111,16 +137,33 @@
   }
 
   .driving-hud {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    font-size: 0.78rem;
   }
 
   .driving-hud span:nth-child(even) {
     text-align: right;
   }
 
+  .driving-env {
+    justify-self: end;
+  }
+
   .driving-canvas {
-    max-height: 68vh;
+    max-height: 64vh;
     width: auto;
     max-width: 100%;
+  }
+
+  .driving-actions {
+    gap: 8px;
+  }
+
+  .driving-actions button {
+    flex: 1 1 120px;
+  }
+
+  .driving-help {
+    font-size: 0.76rem;
   }
 }

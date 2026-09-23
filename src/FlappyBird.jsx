@@ -29,7 +29,7 @@ function createInitialPipes() {
   ]
 }
 
-export default function FlappyBird({ onBack }) {
+export default function FlappyBird({ onBack, onScoreSubmit }) {
   const [birdY, setBirdY] = useState(GAME_HEIGHT / 2)
   const [pipes, setPipes] = useState(createInitialPipes)
   const [score, setScore] = useState(0)
@@ -42,6 +42,7 @@ export default function FlappyBird({ onBack }) {
   const statusRef = useRef('ready')
   const animationFrameRef = useRef(null)
   const lastTimeRef = useRef(null)
+  const submittedRef = useRef(false)
 
   const syncPipes = useCallback((nextPipes) => {
     pipesRef.current = nextPipes
@@ -55,6 +56,7 @@ export default function FlappyBird({ onBack }) {
     birdYRef.current = startY
     velocityRef.current = 0
     statusRef.current = 'ready'
+    submittedRef.current = false
     lastTimeRef.current = null
 
     setBirdY(startY)
@@ -67,7 +69,11 @@ export default function FlappyBird({ onBack }) {
     statusRef.current = 'gameover'
     setStatus('gameover')
     setBestScore((currentBest) => Math.max(currentBest, score))
-  }, [score])
+    if (!submittedRef.current) {
+      submittedRef.current = true
+      onScoreSubmit?.('flappy', score)
+    }
+  }, [onScoreSubmit, score])
 
   const flap = useCallback(() => {
     if (statusRef.current === 'gameover') {

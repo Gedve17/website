@@ -89,7 +89,7 @@ function Card({ card, hidden = false }) {
   )
 }
 
-export default function BlackjackGame({ onBack }) {
+export default function BlackjackGame({ onBack, onScoreSubmit }) {
   const initialGame = useMemo(() => {
     const deck = shuffleDeck(createDeck())
 
@@ -110,6 +110,11 @@ export default function BlackjackGame({ onBack }) {
     losses: 0,
     pushes: 0,
   })
+
+  const leaveGame = () => {
+    onScoreSubmit?.('blackjack', stats.wins)
+    onBack()
+  }
 
   const playerTotal = calculateHand(playerHand)
   const dealerTotal = calculateHand(dealerHand)
@@ -238,7 +243,7 @@ export default function BlackjackGame({ onBack }) {
     <section className="screen blackjack-screen">
       <div className="blackjack-shell">
         <div className="blackjack-header">
-          <button className="secondary-button" type="button" onClick={onBack}>
+          <button className="secondary-button" type="button" onClick={leaveGame}>
             ← Back
           </button>
 

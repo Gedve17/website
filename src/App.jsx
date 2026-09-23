@@ -5,6 +5,9 @@ import BlackjackGame from './BlackjackGame'
 import DrivingGame from './DrivingGame'
 import ZombieGame from './ZombieGame'
 import HelicopterGame from './HelicopterGame'
+import { leaderboardGames, submitLeaderboardScore, validatePlayerName } from './leaderboardApi'
+import { GameLeaderboard, LeaderboardPanel } from './Leaderboard'
+import HomeMenu from './HomeMenu'
 
 
 import { useEffect, useMemo, useState } from 'react'
@@ -103,7 +106,7 @@ function evaluateExpression(expression) {
   return result
 }
 
-function WelcomeScreen({ name, setName, onSubmit, darkMode, toggleDarkMode }) {
+function WelcomeScreen({ name, setName, onSubmit, nameError, darkMode, toggleDarkMode }) {
   const handleSubmit = (event) => {
     event.preventDefault()
     onSubmit()
@@ -131,105 +134,48 @@ function WelcomeScreen({ name, setName, onSubmit, darkMode, toggleDarkMode }) {
             onChange={(event) => setName(event.target.value)}
             placeholder="Enter your name"
             autoFocus
-            maxLength={40}
+            minLength={2}
+            maxLength={20}
           />
           <button className="primary-button" type="submit" disabled={!name.trim()}>
             Submit
           </button>
         </form>
+        {nameError && <p className="name-error" role="alert">{nameError}</p>}
       </div>
     </section>
   )
 }
 
-function MenuScreen({
-  name,
-  onOpenCalculator,
-  onOpenGame,
-  onOpenSnake,
-  onOpenFlappy,
-  onOpenTetris,
-  onOpenBlackjack,
-  onOpenDriving,
-  onOpenZombie,
-  onOpenHelicopter,
-  onReset,
-}) {
+function LeaderboardScreen({ onBack }) {
   return (
-    <section className="screen centered-screen">  {/* Menu screen with options for different features */}
-      <div className="content-card menu-card">
-        <div>
-          <p className="eyebrow">Welcome</p>
-          <h1>{name.toUpperCase()}</h1>
-          <p className="muted">What do you want to do?</p>
+    <section className="screen leaderboard-page-screen">
+      <div className="content-card leaderboard-page-card">
+        <div className="leaderboard-page-header">
+          <button className="secondary-button" type="button" onClick={onBack}>← Back</button>
+          <h1>🏆 Leaderboards</h1>
         </div>
 
-        <div className="menu-grid">
-          <button className="feature-card" onClick={onOpenCalculator} type="button">
-            <span className="feature-icon">🧮</span>
-            <strong>Calculator</strong>
-            <span>Basic arithmetic and square root</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenGame} type="button">
-            <span className="feature-icon">✊</span>
-            <strong>Rock Paper Scissors</strong>
-            <span>Play against the computer and keep score</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenSnake} type="button">
-            <span className="feature-icon">🐍</span>
-            <strong>Snake</strong>
-            <span>Eat food, grow longer and beat your score</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenFlappy} type="button">
-            <span className="feature-icon">🐦</span>
-            <strong>Flappy Bird</strong>
-            <span>Navigate through pipes and avoid collisions</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenTetris} type="button">
-            <span className="feature-icon">🧱</span>
-            <strong>Tetris</strong>
-            <span>Stack blocks, clear lines and beat your score</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenBlackjack} type="button">
-            <span className="feature-icon">🃏</span>
-            <strong>Blackjack</strong>
-            <span>Play the classic card game and try to beat the dealer</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenDriving} type="button">
-            <span className="feature-icon">🏎️</span>
-            <strong>Driving</strong>
-            <span>Switch lanes, avoid traffic and chase a high score</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenZombie} type="button">
-            <span className="feature-icon">🧟</span>
-            <strong>Zombie Defense</strong>
-            <span>Move, shoot and survive the incoming waves</span>
-          </button>
-
-          <button className="feature-card" onClick={onOpenHelicopter} type="button">
-            <span className="feature-icon">🚁</span>
-            <strong>Helicopter Assault</strong>
-            <span>Fly combat missions, destroy targets and protect the convoy</span>
-          </button>
-
+        <div className="leaderboard-page-grid">
+          {leaderboardGames.map((game) => (
+            <LeaderboardPanel key={game.id} game={game.id} />
+          ))}
         </div>
-
-        <button className="text-button" type="button" onClick={onReset}>
-          Change name
-        </button>
       </div>
     </section>
   )
 }
 
-function GameScreen({ onBack }) {
+function GameWithScoreboard({ game, children }) {
+  return (
+    <section className="game-with-scoreboard">
+      <div className="game-content">{children}</div>
+      <GameLeaderboard game={game} />
+    </section>
+  )
+}
+
+function GameScreen({ onBack, onScoreSubmit }) {
   const [score, setScore] = useState(0)
   const [playerChoice, setPlayerChoice] = useState(null)
   const [computerChoice, setComputerChoice] = useState(null)
@@ -259,10 +205,15 @@ function GameScreen({ onBack }) {
     }
   }
 
+  const leaveGame = () => {
+    onScoreSubmit?.('rps', Math.max(0, score))
+    onBack()
+  }
+
   return (
     <section className="screen">
       <div className="top-bar">
-        <button className="secondary-button" type="button" onClick={onBack}>← Back</button>
+        <button className="secondary-button" type="button" onClick={leaveGame}>← Back</button>
         <div className="result-pill">{result}</div>
         <div className="score-pill">Your score: {score}</div>
       </div>
@@ -429,15 +380,21 @@ export default function App() {
   const [screen, setScreen] = useState('welcome')
   const [name, setName] = useState('')
   const [darkMode, setDarkMode] = useState(true)
+  const [nameError, setNameError] = useState('')
 
   const submitName = () => {
-    if (name.trim()) setScreen('menu')
+    const error = validatePlayerName(name)
+    setNameError(error)
+    if (!error) setScreen('menu')
   }
 
   const reset = () => {
     setName('')
+    setNameError('')
     setScreen('welcome')
   }
+
+  const submitScore = (game, score) => submitLeaderboardScore(game, name.trim(), score).catch(() => {})
 
   return (
     <main className={darkMode ? 'app dark' : 'app light'}>
@@ -446,14 +403,18 @@ export default function App() {
           name={name}
           setName={setName}
           onSubmit={submitName}
+          nameError={nameError}
           darkMode={darkMode}
           toggleDarkMode={() => setDarkMode((current) => !current)}
         />
       )}
 
       {screen === 'menu' && (
-        <MenuScreen
+        <HomeMenu
           name={name}
+          darkMode={darkMode}
+          toggleDarkMode={() => setDarkMode((current) => !current)}
+          onOpenLeaderboard={() => setScreen('leaderboard')}
           onOpenCalculator={() => setScreen('calculator')}
           onOpenGame={() => setScreen('game')}
           onOpenSnake={() => setScreen('snake')}
@@ -467,15 +428,16 @@ export default function App() {
         />
       )}
 
-      {screen === 'game' && <GameScreen onBack={() => setScreen('menu')} />}
+      {screen === 'leaderboard' && <LeaderboardScreen onBack={() => setScreen('menu')} />}
+      {screen === 'game' && <GameWithScoreboard game="rps"><GameScreen onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>}
       {screen === 'calculator' && <CalculatorScreen onBack={() => setScreen('menu')} />}
-      {screen === 'snake' && <SnakeGame onBack={() => setScreen('menu')} />}
-      {screen === 'flappy' && (<FlappyBird onBack={() => setScreen('menu')} />)}
-      {screen === 'tetris' && (<TetrisGame onBack={() => setScreen('menu')} />)}
-      {screen === 'blackjack' && (<BlackjackGame onBack={() => setScreen('menu')} />)}
-      {screen === 'driving' && (<DrivingGame onBack={() => setScreen('menu')} />)}
-      {screen === 'zombie' && (<ZombieGame onBack={() => setScreen('menu')} />)}
-      {screen === 'helicopter' && (<HelicopterGame onBack={() => setScreen('menu')} />)}
+      {screen === 'snake' && <GameWithScoreboard game="snake"><SnakeGame onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>}
+      {screen === 'flappy' && (<GameWithScoreboard game="flappy"><FlappyBird onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>)}
+      {screen === 'tetris' && (<GameWithScoreboard game="tetris"><TetrisGame onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>)}
+      {screen === 'blackjack' && (<GameWithScoreboard game="blackjack"><BlackjackGame onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>)}
+      {screen === 'driving' && (<GameWithScoreboard game="driving"><DrivingGame playerName={name} onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>)}
+      {screen === 'zombie' && (<GameWithScoreboard game="zombie"><ZombieGame playerName={name} onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>)}
+      {screen === 'helicopter' && (<GameWithScoreboard game="helicopter"><HelicopterGame playerName={name} onScoreSubmit={submitScore} onBack={() => setScreen('menu')} /></GameWithScoreboard>)}
     </main>
   )
 }

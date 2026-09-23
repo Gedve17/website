@@ -148,6 +148,12 @@ button {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
+.name-error {
+  margin: 12px 0 0;
+  color: var(--danger);
+  font-weight: 700;
+}
+
 .primary-button,
 .secondary-button,
 .text-button,
@@ -174,6 +180,10 @@ button {
 .menu-card {
   padding: 42px;
   text-align: center;
+}
+
+.menu-main {
+  width: 100%;
 }
 
 .menu-grid {

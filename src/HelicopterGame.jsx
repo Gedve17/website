@@ -100,7 +100,7 @@ function drawHelicopter(ctx, x, y, angle, color, scale = 1) {
   ctx.restore()
 }
 
-export default function HelicopterGame({ onBack }) {
+export default function HelicopterGame({ onBack, onScoreSubmit }) {
   const canvasRef = useRef(null)
   const frameRef = useRef(null)
   const keysRef = useRef(new Set())
@@ -128,6 +128,7 @@ export default function HelicopterGame({ onBack }) {
   const escortHealthRef = useRef(100)
   const lastTimeRef = useRef(null)
   const bestRef = useRef(loadBest())
+  const submittedRef = useRef(false)
 
   const [status, setStatus] = useState('ready')
   const [score, setScore] = useState(0)
@@ -173,6 +174,7 @@ export default function HelicopterGame({ onBack }) {
 
   const resetGame = useCallback(() => {
     statusRef.current = 'ready'
+    submittedRef.current = false
     playerRef.current = { x: WIDTH / 2, y: HEIGHT * 0.72, health: MAX_HEALTH, invulnerable: 0 }
     aimRef.current = { x: WIDTH / 2, y: HEIGHT * 0.25, angle: -Math.PI / 2 }
     moveStickRef.current = { x: 0, y: 0 }
@@ -215,7 +217,11 @@ export default function HelicopterGame({ onBack }) {
     setStatus('gameover')
     setNotice(message)
     saveBest(scoreRef.current)
-  }, [saveBest])
+    if (!submittedRef.current) {
+      submittedRef.current = true
+      onScoreSubmit?.('helicopter', scoreRef.current)
+    }
+  }, [onScoreSubmit, saveBest])
 
   const completeMission = useCallback(() => {
     if (missionCompleteRef.current) return
@@ -227,6 +233,10 @@ export default function HelicopterGame({ onBack }) {
 
     if (finalMission) {
       saveBest(scoreRef.current)
+      if (!submittedRef.current) {
+        submittedRef.current = true
+        onScoreSubmit?.('helicopter', scoreRef.current)
+      }
       statusRef.current = 'victory'
       setStatus('victory')
       setNotice('Campaign complete — enemy command destroyed')
@@ -240,7 +250,7 @@ export default function HelicopterGame({ onBack }) {
       enemyBulletsRef.current = []
       setupMission(current + 1)
     }, 1200)
-  }, [saveBest, setupMission])
+  }, [onScoreSubmit, saveBest, setupMission])
 
   const fireGun = useCallback(() => {
     if (statusRef.current === 'ready') {

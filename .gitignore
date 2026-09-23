@@ -4,6 +4,13 @@ node_modules/
 # Production and preview builds
 dist/
 
+# Leaderboard runtime data
+leaderboard.json
+data/*.sqlite
+data/*.sqlite-journal
+data/*.sqlite-wal
+data/*.sqlite-shm
+
 # Local environment and secrets
 .env
 .env.*

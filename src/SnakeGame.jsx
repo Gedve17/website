@@ -3,6 +3,9 @@ import './SnakeGame.css'
 
 const BOARD_SIZE = 20
 const GAME_SPEED = 120
+const BONUS_LIFETIME_TICKS = 50
+const BONUS_MOVE_EVERY_TICKS = 3
+const BONUS_SPAWN_CHANCE = 0.18
 
 const DIRECTIONS = {
   up: { x: 0, y: -1 },
@@ -42,21 +45,65 @@ function createFood(snake) {
   return freeCells[Math.floor(Math.random() * freeCells.length)]
 }
 
-export default function SnakeGame({ onBack }) {
+function createBonusFruit(snake, food) {
+  if (Math.random() > BONUS_SPAWN_CHANCE) return null
+
+  const occupied = new Set(snake.map((segment) => `${segment.x}-${segment.y}`))
+  if (food) occupied.add(`${food.x}-${food.y}`)
+
+  const freeCells = []
+  for (let y = 0; y < BOARD_SIZE; y += 1) {
+    for (let x = 0; x < BOARD_SIZE; x += 1) {
+      if (!occupied.has(`${x}-${y}`)) freeCells.push({ x, y })
+    }
+  }
+
+  if (freeCells.length === 0) return null
+  return { ...freeCells[Math.floor(Math.random() * freeCells.length)], ttl: BONUS_LIFETIME_TICKS }
+}
+
+function moveBonusFruit(bonus, snake, food) {
+  const candidates = Object.values(DIRECTIONS)
+    .map((direction) => ({ x: bonus.x + direction.x, y: bonus.y + direction.y }))
+    .filter((cell) => (
+      cell.x >= 0 &&
+      cell.x < BOARD_SIZE &&
+      cell.y >= 0 &&
+      cell.y < BOARD_SIZE &&
+      !snake.some((segment) => segment.x === cell.x && segment.y === cell.y) &&
+      (!food || food.x !== cell.x || food.y !== cell.y)
+    ))
+
+  if (candidates.length === 0) return { ...bonus, ttl: bonus.ttl - 1 }
+  const next = candidates[Math.floor(Math.random() * candidates.length)]
+  return { ...next, ttl: bonus.ttl - 1 }
+}
+
+export default function SnakeGame({ onBack, onScoreSubmit }) {
   const [snake, setSnake] = useState(() => createStartingSnake())
   const [food, setFood] = useState(() => createFood(createStartingSnake()))
+  const [bonusFood, setBonusFood] = useState(() => {
+    const snake = createStartingSnake()
+    return createBonusFruit(snake, food)
+  })
   const [score, setScore] = useState(0)
   const [status, setStatus] = useState('ready')
 
   const directionRef = useRef('right')
-  const nextDirectionRef = useRef('right')
+  const directionQueueRef = useRef([])
   const touchStartRef = useRef(null)
+  const bonusFoodRef = useRef(bonusFood)
+  const snakeRef = useRef(snake)
+  const bonusTickRef = useRef(0)
+  const scoreRef = useRef(0)
+  const submittedRef = useRef(false)
 
   const changeDirection = useCallback((newDirection) => {
     if (!DIRECTIONS[newDirection]) return
-    if (OPPOSITES[directionRef.current] === newDirection) return
+    const lastQueuedDirection = directionQueueRef.current.at(-1) || directionRef.current
+    if (OPPOSITES[lastQueuedDirection] === newDirection) return
 
-    nextDirectionRef.current = newDirection
+    if (directionQueueRef.current.length < 2) directionQueueRef.current.push(newDirection)
     setStatus((current) => (current === 'ready' ? 'playing' : current))
   }, [])
 
@@ -64,11 +111,19 @@ export default function SnakeGame({ onBack }) {
     const newSnake = createStartingSnake()
 
     directionRef.current = 'right'
-    nextDirectionRef.current = 'right'
+    directionQueueRef.current = []
     touchStartRef.current = null
+    scoreRef.current = 0
+    submittedRef.current = false
+    bonusTickRef.current = 0
+    snakeRef.current = newSnake
 
     setSnake(newSnake)
-    setFood(createFood(newSnake))
+    const newFood = createFood(newSnake)
+    const newBonusFood = createBonusFruit(newSnake, newFood)
+    bonusFoodRef.current = newBonusFood
+    setFood(newFood)
+    setBonusFood(newBonusFood)
     setScore(0)
     setStatus(startImmediately ? 'playing' : 'ready')
   }, [])
@@ -116,8 +171,20 @@ export default function SnakeGame({ onBack }) {
     if (status !== 'playing') return undefined
 
     const interval = window.setInterval(() => {
-      const nextDirection = nextDirectionRef.current
+      const nextDirection = directionQueueRef.current.shift() || directionRef.current
       directionRef.current = nextDirection
+
+      bonusTickRef.current += 1
+      let nextBonusFood = bonusFoodRef.current
+      if (nextBonusFood) {
+        nextBonusFood = nextBonusFood.ttl <= 0
+          ? null
+          : bonusTickRef.current % BONUS_MOVE_EVERY_TICKS === 0
+            ? moveBonusFruit(nextBonusFood, snakeRef.current, food)
+            : { ...nextBonusFood, ttl: nextBonusFood.ttl - 1 }
+        bonusFoodRef.current = nextBonusFood
+        setBonusFood(nextBonusFood)
+      }
 
       setSnake((currentSnake) => {
         const head = currentSnake[0]
@@ -135,11 +202,16 @@ export default function SnakeGame({ onBack }) {
 
         if (hitWall) {
           setStatus('gameover')
+          if (!submittedRef.current) {
+            submittedRef.current = true
+            onScoreSubmit?.('snake', scoreRef.current)
+          }
           return currentSnake
         }
 
         const ateFood = food && newHead.x === food.x && newHead.y === food.y
-        const bodyToCheck = ateFood ? currentSnake : currentSnake.slice(0, -1)
+        const ateBonusFood = nextBonusFood && newHead.x === nextBonusFood.x && newHead.y === nextBonusFood.y
+        const bodyToCheck = ateFood || ateBonusFood ? currentSnake : currentSnake.slice(0, -1)
 
         const hitSelf = bodyToCheck.some(
           (segment) => segment.x === newHead.x && segment.y === newHead.y,
@@ -147,24 +219,37 @@ export default function SnakeGame({ onBack }) {
 
         if (hitSelf) {
           setStatus('gameover')
+          if (!submittedRef.current) {
+            submittedRef.current = true
+            onScoreSubmit?.('snake', scoreRef.current)
+          }
           return currentSnake
         }
 
         const newSnake = [newHead, ...currentSnake]
 
-        if (ateFood) {
-          setScore((currentScore) => currentScore + 1)
-          const newFood = createFood(newSnake)
+        if (ateFood || ateBonusFood) {
+          scoreRef.current += ateBonusFood ? 5 : 1
+          setScore(scoreRef.current)
+          const newFood = ateFood ? createFood(newSnake) : food
 
-          if (newFood) {
+          if (ateFood && newFood) {
             setFood(newFood)
-          } else {
+          } else if (ateFood) {
             setFood(null)
             setStatus('won')
+          }
+
+          if (ateBonusFood) {
+            const refreshedBonus = createBonusFruit(newSnake, newFood)
+            bonusFoodRef.current = refreshedBonus
+            setBonusFood(refreshedBonus)
           }
         } else {
           newSnake.pop()
         }
+
+        snakeRef.current = newSnake
 
         return newSnake
       })
@@ -288,12 +373,14 @@ export default function SnakeGame({ onBack }) {
               const isHead = snakeIndex === 0
               const isTail = snakeIndex === snake.length - 1
               const isFood = food && food.x === x && food.y === y
+              const isBonusFood = bonusFood && bonusFood.x === x && bonusFood.y === y
 
               let className = 'snake-cell'
               if (isSnake) className += ' snake-body'
               if (isHead) className += ` snake-head snake-head-${directionRef.current}`
               if (isTail) className += ' snake-tail'
               if (isFood) className += ' snake-food'
+              if (isBonusFood) className += ' snake-bonus-food'
 
               return <div key={`${x}-${y}`} className={className} aria-hidden="true" />
             })}

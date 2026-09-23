@@ -145,7 +145,7 @@ function pointsForLines(lines) {
   return 0
 }
 
-export default function TetrisGame({ onBack }) {
+export default function TetrisGame({ onBack, onScoreSubmit }) {
   const [board, setBoard] = useState(createEmptyBoard)
   const [piece, setPiece] = useState(createRandomPiece)
   const [nextPiece, setNextPiece] = useState(createRandomPiece)
@@ -160,6 +160,8 @@ export default function TetrisGame({ onBack }) {
   const statusRef = useRef(status)
   const isClearingRef = useRef(false)
   const clearTimerRef = useRef(null)
+  const scoreRef = useRef(0)
+  const submittedRef = useRef(false)
 
   useEffect(() => {
     boardRef.current = board
@@ -195,6 +197,8 @@ export default function TetrisGame({ onBack }) {
       setBoard(freshBoard)
       setPiece(freshPiece)
       setNextPiece(freshNext)
+      scoreRef.current = 0
+      submittedRef.current = false
       setScore(0)
       setLines(0)
       setStatus('playing')
@@ -216,6 +220,8 @@ export default function TetrisGame({ onBack }) {
     pieceRef.current = freshPiece
     nextPieceRef.current = freshNext
     statusRef.current = 'ready'
+    scoreRef.current = 0
+    submittedRef.current = false
 
     setBoard(freshBoard)
     setPiece(freshPiece)
@@ -249,6 +255,10 @@ export default function TetrisGame({ onBack }) {
     if (collides(lockedBoard, spawned)) {
       statusRef.current = 'gameover'
       setStatus('gameover')
+      if (!submittedRef.current) {
+        submittedRef.current = true
+        onScoreSubmit?.('tetris', scoreRef.current)
+      }
       return
     }
 
@@ -256,7 +266,7 @@ export default function TetrisGame({ onBack }) {
     nextPieceRef.current = newNext
     setPiece(spawned)
     setNextPiece(newNext)
-  }, [])
+  }, [onScoreSubmit])
 
 const lockPiece = useCallback(() => {
   const currentBoard = boardRef.current
@@ -289,10 +299,9 @@ const lockPiece = useCallback(() => {
       (currentLines) => currentLines + cleared.linesCleared
     )
 
-    setScore(
-      (currentScore) =>
-        currentScore + pointsForLines(cleared.linesCleared)
-    )
+    const points = pointsForLines(cleared.linesCleared)
+    scoreRef.current += points
+    setScore(scoreRef.current)
 
     setClearingRows([])
     isClearingRef.current = false
@@ -416,7 +425,8 @@ const lockPiece = useCallback(() => {
 
     pieceRef.current = dropped
     setPiece(dropped)
-    setScore((currentScore) => currentScore + distance * 2)
+    scoreRef.current += distance * 2
+    setScore(scoreRef.current)
 
     requestAnimationFrame(() => {
       lockPiece()
